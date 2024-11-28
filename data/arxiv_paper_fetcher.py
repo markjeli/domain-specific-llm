@@ -12,12 +12,7 @@ logging.basicConfig(
 
 PAGE_SIZE = 10
 MAX_RESULTS = 10
-SEARCH_QUERY = (
-    "medical OR healthcare OR clinical OR biomedical OR diagnosis OR therapy OR treatment OR surgery OR "
-    "disease OR patient OR hospital OR doctor OR nurse OR medicine OR health OR wellness OR "
-    "pharmaceutical OR drug OR vaccine OR virus OR bacteria OR infection OR cure OR recovery OR "
-    "rehabilitation"
-)
+SEARCH_QUERY = "medical OR healthcare OR medicine OR disease OR pharmaceutical OR surgery OR x-ray OR cancer OR tomography OR morphology"
 
 
 def remove_latex_tags(text: str):
