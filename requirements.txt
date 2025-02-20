@@ -1,0 +1,3 @@
+arxiv==2.1.3
+paperscraper==0.2.15
+unsloth==2025.2.13
