@@ -1,9 +1,10 @@
 import logging
+import os
 
 import torch
 from datasets import load_dataset
-from transformers import TrainingArguments, DataCollatorForSeq2Seq
-from trl import SFTTrainer
+from transformers import DataCollatorForSeq2Seq
+from trl import SFTTrainer, SFTConfig
 from unsloth import FastLanguageModel
 from unsloth import is_bfloat16_supported
 from unsloth.chat_templates import get_chat_template, train_on_responses_only
@@ -11,6 +12,9 @@ from unsloth.chat_templates import get_chat_template, train_on_responses_only
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+# Set the environment variable
+os.environ["UNSLOTH_RETURN_LOGITS"] = "1"
 
 
 def main():
@@ -73,12 +77,15 @@ def main():
         model=model,
         tokenizer=tokenizer,
         train_dataset=dataset,
-        dataset_text_field="text",
-        max_seq_length=max_seq_length,
+        # dataset_text_field="text",
+        
         data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer),
-        dataset_num_proc=2,
-        packing=False,
-        args=TrainingArguments(
+        
+        
+        args=SFTConfig(
+            max_seq_length=max_seq_length,
+            dataset_num_proc=2,
+            packing=False,
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
             warmup_steps=5,
@@ -91,7 +98,7 @@ def main():
             optim="adamw_8bit",
             weight_decay=0.01,
             lr_scheduler_type="linear",
-            seed=3407,
+            seed=42,
             output_dir="outputs",
             report_to="none",  # Use this for WandB etc
         ),
