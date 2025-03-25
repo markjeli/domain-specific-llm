@@ -29,15 +29,20 @@ BIORXIV_CATEGORIES = [
 
 
 def fetch_papers(api, fields, counter, categories=None):
+    global doi_numbers
     for paper in api.get_papers(fields=fields):
         if (categories and paper["category"].lower() not in categories) or paper[
             "doi"
         ] in doi_numbers:
             continue
-        doi_numbers.add(paper["doi"])
+
         parsed_abstract = remove_latex_tags(paper["abstract"])
+        if parsed_abstract.strip() == "":
+            continue
+        doi_numbers.add(paper["doi"])
+
         try:
-            writer.writerow([parsed_abstract, paper["doi"]])
+            writer.writerow([parsed_abstract, paper["doi"], paper['date']])
             counter += 1
         except UnicodeEncodeError:
             logging.error(f"Failed to write paper with DOI: {paper['doi']}")
@@ -52,24 +57,24 @@ def fetch_papers(api, fields, counter, categories=None):
 if __name__ == "__main__":
     medrxiv_api = MedRxivApi(max_retries=10)
     biorxiv_api = BioRxivApi(max_retries=10)
-    csv_path = pathlib.Path("medical_abstracts.csv")
+    csv_path = pathlib.Path("medical_abstracts_v2.csv")
     csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(csv_path, "a", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Abstract", "DOI"])
+        writer.writerow(["Abstract", "DOI", "Date"])
         doi_numbers = set()
         medrxiv_paper_counter = 0
         biorxiv_paper_counter = 0
 
         # Fetch papers from medRxiv
         medrxiv_paper_counter = fetch_papers(
-            medrxiv_api, ["abstract", "doi"], medrxiv_paper_counter
+            medrxiv_api, ["abstract", "doi", "date"], medrxiv_paper_counter
         )
         # Fetch papers from bioRxiv
         biorxiv_paper_counter = fetch_papers(
             biorxiv_api,
-            ["abstract", "doi", "category"],
+            ["abstract", "doi", "category", "date"],
             biorxiv_paper_counter,
             BIORXIV_CATEGORIES,
         )
