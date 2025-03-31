@@ -11,15 +11,17 @@
 #SBATCH -e slurm/error.err # STDERR
 #SBATCH -o slurm/out.out # STDOUT
 
-module load Miniconda3/23.3.1-0
-conda activate $HOME/.conda/envs/domain-llm-env
+module load GCCcore/12.3.0
+module load Python/3.11.3
+module load CUDA/12.1.1
 
-module load GCC/13.2.0
-module load OpenMPI/4.1.6
-module load CUDA/12.4.0
+source $SCRATCH/venv/bin/activate
+export HF_HOME=$SCRATCH/.cache_dir/huggingface
+export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 
-python -m pip install torch==2.5.0 torchvision==0.20.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu124
-python -m pip install "unsloth[cu124-ampere-torch250] @ git+https://github.com/unslothai/unsloth.git"
+pip install -U pip
+pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu121
+pip install "unsloth[cu121-torch240] @ git+https://github.com/unslothai/unsloth.git"
 
 python train_cpt.py
 
