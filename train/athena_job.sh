@@ -14,15 +14,12 @@
 module load Miniconda3/23.3.1-0
 conda activate $HOME/.conda/envs/domain-llm-env
 
-module load GCC/11.3.0
-module load OpenMPI/4.1.4
-module load CUDA/11.7.0
-module load PyTorch/1.13.1-CUDA-11.7.0
+module load GCC/13.2.0
+module load OpenMPI/4.1.6
+module load CUDA/12.4.0
 
-python -m pip install unsloth
-python -m pip install transformers
-python -m pip install datasets
-python -m pip install trl
+python -m pip install torch==2.5.0 torchvision==0.20.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu124
+python -m pip install "unsloth[cu124-ampere-torch250] @ git+https://github.com/unslothai/unsloth.git"
 
 python train_cpt.py
 
