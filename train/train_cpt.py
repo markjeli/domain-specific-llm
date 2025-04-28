@@ -14,6 +14,7 @@ def main():
     dataset = load_dataset("csv", data_files=dataset_path, split="train[:2500]")
 
     EOS_TOKEN = tokenizer.eos_token
+    tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
     def formatting_prompts_func(examples):
         return {"Abstract": [example + EOS_TOKEN for example in examples["Abstract"]]}
