@@ -168,3 +168,6 @@ outputs/
 
 # Models
 Llama-3.2*
+
+# Slurm logs
+slurm/
