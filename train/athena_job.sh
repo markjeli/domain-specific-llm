@@ -20,6 +20,7 @@ export HF_HOME=$SCRATCH/.cache_dir/huggingface
 export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 
 python train_cpt.py \
+  --save_dir outputs/final_model \
   --dataset_text_field Abstract \
   --max_seq_length 2048 \
   --per_device_train_batch_size 8 \

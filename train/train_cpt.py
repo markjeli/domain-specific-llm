@@ -1,9 +1,19 @@
+from dataclasses import dataclass, field
+
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, HfArgumentParser
 from trl import SFTConfig, SFTTrainer
 
 
-def main(sft_config):
+@dataclass
+class AdditionalArguments:
+    save_dir: str = field(
+        default=None,
+        metadata={"help": "Path to save the model."},
+    )
+
+
+def main(user_config: AdditionalArguments, sft_config: SFTConfig):
     dataset_path = "medical_abstracts_train.csv"
     model_name_or_path = "meta-llama/Llama-3.2-1B"
 
@@ -30,10 +40,10 @@ def main(sft_config):
     trainer_stats = trainer.train()
     print(trainer_stats)
 
-    trainer.save_model("outputs/final_model")
+    trainer.save_model(user_config.save_dir)
 
 
 if __name__ == "__main__":
-    parser = HfArgumentParser(SFTConfig)
-    sft_config = parser.parse_args_into_dataclasses()
-    main(sft_config)
+    parser = HfArgumentParser((AdditionalArguments, SFTConfig))
+    user_config, sft_config = parser.parse_args_into_dataclasses()
+    main(user_config, sft_config)
