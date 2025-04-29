@@ -25,16 +25,21 @@ def main(user_config: AdditionalArguments, sft_config: SFTConfig):
     EOS_TOKEN = tokenizer.eos_token
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
-    def formatting_prompts_func(examples):
-        return {"Abstract": [example + EOS_TOKEN for example in examples["Abstract"]]}
+    def tokenize_function(examples):
+        return tokenizer(
+            [example + EOS_TOKEN for example in examples["Abstract"]],
+            padding="max_length",
+            max_length=sft_config.max_seq_length,
+        )
 
-    dataset = dataset.map(formatting_prompts_func, batched=True)
+    tokenized_dataset = dataset.map(
+        tokenize_function, batched=True, remove_columns=["Abstract", "DOI", "Date"]
+    )
 
     trainer = SFTTrainer(
         model=model,
-        train_dataset=dataset,
+        train_dataset=tokenized_dataset,
         args=sft_config,
-        processing_class=tokenizer,
     )
 
     trainer_stats = trainer.train()
