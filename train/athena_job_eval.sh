@@ -9,7 +9,7 @@
 #SBATCH --mem=16G
 #SBATCH --gres=gpu
 #SBATCH -e slurm/eval_error.log # STDERR
-#SBATCH -o slurm/eval.log # STDOUT
+#SBATCH -o slurm/eval_out.log # STDOUT
 
 module load GCCcore/12.3.0
 module load Python/3.11.3
