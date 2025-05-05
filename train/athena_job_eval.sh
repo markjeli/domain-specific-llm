@@ -19,5 +19,11 @@ source $SCRATCH/venv/bin/activate
 export HF_HOME=$SCRATCH/.cache_dir/huggingface
 export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 
-lm_eval --model hf --model_args pretrained=unsloth/Llama-3.2-1B,load_in_4bit=True,peft=Llama-3.2-1B-abstract --log_samples --output_path eval_results --tasks mmlu_pro --device cuda:0 --batch_size auto:2
-
+lm_eval \
+  --model hf \
+  --model_args pretrained=Llama-3.2-1B-abstract \
+  --log_samples \
+  --output_path eval_results \
+  --tasks mmlu \
+  --device cuda:0 \
+  --batch_size auto:2
