@@ -21,6 +21,8 @@ export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 
 python train_cpt.py \
   --save_dir outputs/final_model \
+  --load_in_8bit True \
+  --load_in_4bit False \
   --max_seq_length 2048 \
   --per_device_train_batch_size 2 \
   --gradient_accumulation_steps 8 \
