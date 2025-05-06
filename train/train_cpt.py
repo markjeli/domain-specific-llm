@@ -8,6 +8,7 @@ from transformers import (
     BitsAndBytesConfig,
 )
 from trl import SFTConfig, SFTTrainer
+from peft import LoraConfig, TaskType, get_peft_model
 
 
 @dataclass
@@ -32,10 +33,29 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     quantization_config = BitsAndBytesConfig(
         load_in_8bit=user_config.load_in_8bit, load_in_4bit=user_config.load_in_4bit
     )
+
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
     model = AutoModelForCausalLM.from_pretrained(
         model_name_or_path, device_map="auto", quantization_config=quantization_config
     )
+
+    lora_config = LoraConfig(
+        r=256,
+        lora_alpha=128,
+        target_modules=[
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj",
+        ],
+        modules_to_save=["lm_head", "embed_token"],
+        task_type=TaskType.CAUSAL_LM,
+        bias="none",
+    )
+    model = get_peft_model(model, lora_config)
 
     dataset = load_dataset("csv", data_files=dataset_path, split="train")
 
