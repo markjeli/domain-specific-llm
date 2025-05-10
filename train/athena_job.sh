@@ -28,6 +28,7 @@ python train_cpt.py \
   --gradient_accumulation_steps 8 \
   --learning_rate 2e-5 \
   --optim adamw_8bit \
+  --fp16 True \
   --output_dir $SCRATCH/model-outputs
 
 # it is important to start this script with: sbatch athena_job.sh
