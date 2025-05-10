@@ -40,8 +40,8 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     )
 
     lora_config = LoraConfig(
-        r=256,
-        lora_alpha=128,
+        r=8,
+        lora_alpha=16,
         target_modules=[
             "q_proj",
             "k_proj",
@@ -51,7 +51,6 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
             "up_proj",
             "down_proj",
         ],
-        modules_to_save=["lm_head", "embed_token"],
         task_type=TaskType.CAUSAL_LM,
         bias="none",
     )
