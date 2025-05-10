@@ -1,40 +1,53 @@
-import logging
-import os
+from dataclasses import dataclass, field
 
-import torch
 from datasets import load_dataset
-from transformers import DataCollatorForSeq2Seq
-from trl import SFTTrainer, SFTConfig
-from unsloth import FastLanguageModel
-from unsloth import is_bfloat16_supported
-from unsloth.chat_templates import get_chat_template, train_on_responses_only
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+from peft import LoraConfig, TaskType, get_peft_model
+from transformers import (
+    HfArgumentParser,
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    BitsAndBytesConfig,
 )
-
-# Set the environment variable
-os.environ["UNSLOTH_RETURN_LOGITS"] = "1"
+from trl import SFTConfig, SFTTrainer
 
 
-def main():
-    save_dir = "Llama-3.2-1B-medic-chatbot"
-    save_model = True
-
-    max_seq_length = 2048
-    dtype = None
-    load_in_4bit = True
-
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="unsloth/Llama-3.2-1B-Instruct",  # for 16bit loading
-        max_seq_length=max_seq_length,
-        dtype=dtype,
-        load_in_4bit=load_in_4bit,
+@dataclass
+class ScriptArguments:
+    save_dir: str = field(
+        default=None,
+        metadata={"help": "Path to save the model."},
+    )
+    model_name_or_path: str = field(
+        default="meta-llama/Llama-3.2-1B",
+        metadata={"help": "Hugging Face model ID or path to the local model."},
+    )
+    load_in_8bit: bool = field(
+        default=False,
+        metadata={"help": "Load model in 8-bit."},
+    )
+    load_in_4bit: bool = field(
+        default=False,
+        metadata={"help": "Load model in 4-bit."},
     )
 
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=16,
+
+def main(user_config: ScriptArguments, sft_config: SFTConfig):
+    quantization_config = BitsAndBytesConfig(
+        load_in_8bit=user_config.load_in_8bit, load_in_4bit=user_config.load_in_4bit
+    )
+
+    # Use instruct version of the model because it contains chat template and its tokens.
+    # Other (harder) option will be to extend previous tokenizer with new tokens and chat template.
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
+    model = AutoModelForCausalLM.from_pretrained(
+        user_config.model_name_or_path,
+        device_map="auto",
+        quantization_config=quantization_config,
+    )
+
+    lora_config = LoraConfig(
+        r=8,
+        lora_alpha=16,
         target_modules=[
             "q_proj",
             "k_proj",
@@ -44,99 +57,45 @@ def main():
             "up_proj",
             "down_proj",
         ],
-        lora_alpha=16,
-        lora_dropout=0,
+        modules_to_save=[
+            "lm_head",
+            "embed_token",
+        ],  # Needed for Llama chat template. It will learn chat template tokens.
+        task_type=TaskType.CAUSAL_LM,
         bias="none",
-        use_gradient_checkpointing="unsloth",
-        random_state=42,
-        use_rslora=False,
-        loftq_config=None,
     )
+    model = get_peft_model(model, lora_config)
 
-    dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train[:2500]")
-
-    tokenizer = get_chat_template(
-        tokenizer,
-        chat_template="llama-3.1",
-    )
+    dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
 
     def format_chat_template(row):
         row_json = [
             {"role": "user", "content": row["Patient"]},
             {"role": "assistant", "content": row["Doctor"]},
         ]
-        row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
+        row["text"] = tokenizer.apply_chat_template(row_json)
         return row
 
-    dataset = dataset.map(
+    tokenized_chat_dataset = dataset.map(
         format_chat_template,
         num_proc=4,
+        remove_columns=["Description", "Patient", "Doctor"],
     )
 
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
-        train_dataset=dataset,
-        # dataset_text_field="text",
-        
-        data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer),
-        
-        
-        args=SFTConfig(
-            max_seq_length=max_seq_length,
-            dataset_num_proc=2,
-            packing=False,
-            per_device_train_batch_size=2,
-            gradient_accumulation_steps=4,
-            warmup_steps=5,
-            # num_train_epochs = 1, # Set this for 1 full training run.
-            max_steps=60,
-            learning_rate=2e-4,
-            fp16=not is_bfloat16_supported(),
-            bf16=is_bfloat16_supported(),
-            logging_steps=1,
-            optim="adamw_8bit",
-            weight_decay=0.01,
-            lr_scheduler_type="linear",
-            seed=42,
-            output_dir="outputs",
-            report_to="none",  # Use this for WandB etc
-        ),
+        train_dataset=tokenized_chat_dataset,
+        args=sft_config,
     )
-
-    trainer = train_on_responses_only(
-        trainer,
-        instruction_part="<|start_header_id|>user<|end_header_id|>\n\n",
-        response_part="<|start_header_id|>assistant<|end_header_id|>\n\n",
-    )
-
-    gpu_stats = torch.cuda.get_device_properties(0)
-    start_gpu_memory = round(torch.cuda.max_memory_reserved() / 1024 / 1024 / 1024, 3)
-    max_memory = round(gpu_stats.total_memory / 1024 / 1024 / 1024, 3)
-    logging.info(f"GPU = {gpu_stats.name}. Max memory = {max_memory} GB.")
-    logging.info(f"{start_gpu_memory} GB of memory reserved.")
 
     trainer_stats = trainer.train()
+    print(trainer_stats)
 
-    used_memory = round(torch.cuda.max_memory_reserved() / 1024 / 1024 / 1024, 3)
-    used_memory_for_lora = round(used_memory - start_gpu_memory, 3)
-    used_percentage = round(used_memory / max_memory * 100, 3)
-    lora_percentage = round(used_memory_for_lora / max_memory * 100, 3)
-    logging.info(f"{trainer_stats.metrics['train_runtime']} seconds used for training.")
-    logging.info(
-        f"{round(trainer_stats.metrics['train_runtime'] / 60, 2)} minutes used for training."
-    )
-    logging.info(f"Peak reserved memory = {used_memory} GB.")
-    logging.info(f"Peak reserved memory for training = {used_memory_for_lora} GB.")
-    logging.info(f"Peak reserved memory % of max memory = {used_percentage} %.")
-    logging.info(
-        f"Peak reserved memory for training % of max memory = {lora_percentage} %."
-    )
-
-    if save_model:
-        model.save_pretrained(save_dir)
-        tokenizer.save_pretrained(save_dir)
+    trainer.save_model(user_config.save_dir)
 
 
 if __name__ == "__main__":
-    main()
+    parser = HfArgumentParser((ScriptArguments, SFTConfig))
+    user_config, sft_config = parser.parse_args_into_dataclasses()
+
+    main(user_config, sft_config)
