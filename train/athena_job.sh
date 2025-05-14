@@ -18,17 +18,22 @@ module load CUDA/12.1.1
 source $SCRATCH/venv/bin/activate
 export HF_HOME=$SCRATCH/.cache_dir/huggingface
 export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
+export WANDB_PROJECT=magisterka
 
 python train_cpt.py \
   --save_dir outputs/final_model \
-  --load_in_8bit True \
-  --load_in_4bit False \
+  --load_in_8bit False \
+  --load_in_4bit True \
+  --bnb_4bit_quant_type nf4 \
+  --bnb_4bit_use_double_quant True \
   --max_seq_length 2048 \
-  --per_device_train_batch_size 2 \
+  --per_device_train_batch_size 4 \
   --gradient_accumulation_steps 8 \
   --learning_rate 2e-5 \
   --optim adamw_8bit \
-  --fp16 True \
-  --output_dir $SCRATCH/model-outputs
+  --bf16 True \
+  --output_dir $SCRATCH/model-outputs \
+  --report_to wandb \
+  --run_name llama-3.2-1B-abstract-4bit
 
 # it is important to start this script with: sbatch athena_job.sh

@@ -1,3 +1,4 @@
+import torch
 from dataclasses import dataclass, field
 
 from datasets import load_dataset
@@ -25,13 +26,29 @@ class ScriptArguments:
         default=False,
         metadata={"help": "Load model in 4-bit."},
     )
+    bnb_4bit_quant_type: str = field(
+        default="fp4",
+        metadata={
+            "help": "Quantization type for 4-bit quantization. Options: 'fp4', 'nf4'."
+        },
+    )
+    bnb_4bit_use_double_quant: bool = field(
+        default=False,
+        metadata={
+            "help": "Use double quantization for 4-bit quantization. Recommended for better performance."
+        },
+    )
 
 
 def main(user_config: ScriptArguments, sft_config: SFTConfig):
     dataset_path = "medical_abstracts_train.csv"
     model_name_or_path = "meta-llama/Llama-3.2-1B"
     quantization_config = BitsAndBytesConfig(
-        load_in_8bit=user_config.load_in_8bit, load_in_4bit=user_config.load_in_4bit
+        load_in_8bit=user_config.load_in_8bit,
+        load_in_4bit=user_config.load_in_4bit,
+        bnb_4bit_quant_type=user_config.bnb_4bit_quant_type,
+        bnb_4bit_use_double_quant=user_config.bnb_4bit_use_double_quant,
+        bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
@@ -56,7 +73,7 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     )
     model = get_peft_model(model, lora_config)
 
-    dataset = load_dataset("csv", data_files=dataset_path, split="train")
+    dataset = load_dataset("csv", data_files=dataset_path, split="train[:50%]")
 
     EOS_TOKEN = tokenizer.eos_token
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
