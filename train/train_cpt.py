@@ -72,6 +72,7 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         bias="none",
     )
     model = get_peft_model(model, lora_config)
+    model.print_trainable_parameters()
 
     dataset = load_dataset("csv", data_files=dataset_path, split="train[:50%]")
 
