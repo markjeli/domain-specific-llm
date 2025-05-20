@@ -28,10 +28,12 @@ python train_cpt.py \
   --bnb_4bit_use_double_quant True \
   --max_seq_length 2048 \
   --per_device_train_batch_size 4 \
+  --per_device_eval_batch_size 4 \
   --gradient_accumulation_steps 8 \
   --learning_rate 2e-5 \
   --optim adamw_8bit \
   --bf16 True \
+  --eval_strategy steps \
   --output_dir $SCRATCH/model-outputs \
   --report_to wandb \
   --run_name llama-3.2-1B-abstract-4bit
