@@ -1,3 +1,4 @@
+import torch
 from dataclasses import dataclass, field
 
 from datasets import load_dataset
@@ -29,11 +30,27 @@ class ScriptArguments:
         default=False,
         metadata={"help": "Load model in 4-bit."},
     )
+    bnb_4bit_quant_type: str = field(
+        default="fp4",
+        metadata={
+            "help": "Quantization type for 4-bit quantization. Options: 'fp4', 'nf4'."
+        },
+    )
+    bnb_4bit_use_double_quant: bool = field(
+        default=False,
+        metadata={
+            "help": "Use double quantization for 4-bit quantization. Recommended for better performance."
+        },
+    )
 
 
 def main(user_config: ScriptArguments, sft_config: SFTConfig):
     quantization_config = BitsAndBytesConfig(
-        load_in_8bit=user_config.load_in_8bit, load_in_4bit=user_config.load_in_4bit
+        load_in_8bit=user_config.load_in_8bit,
+        load_in_4bit=user_config.load_in_4bit,
+        bnb_4bit_quant_type=user_config.bnb_4bit_quant_type,
+        bnb_4bit_use_double_quant=user_config.bnb_4bit_use_double_quant,
+        bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
     # Use instruct version of the model because it contains chat template and its tokens.
