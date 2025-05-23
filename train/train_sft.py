@@ -84,14 +84,16 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     model = get_peft_model(model, lora_config)
 
     dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
+    tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
     def format_chat_template(row):
         row_json = [
             {"role": "user", "content": row["Patient"]},
             {"role": "assistant", "content": row["Doctor"]},
         ]
-        row["text"] = tokenizer.apply_chat_template(row_json)
-        return row
+        row = tokenizer.apply_chat_template(row_json, tokenize=False)
+        tokenized_row = tokenizer(row, padding="max_length", max_length=user_config.max_length)
+        return tokenized_row
 
     tokenized_chat_dataset = dataset.map(
         format_chat_template,
