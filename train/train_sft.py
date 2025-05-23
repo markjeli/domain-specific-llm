@@ -91,11 +91,10 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
             {"role": "user", "content": row["Patient"]},
             {"role": "assistant", "content": row["Doctor"]},
         ]
-        row = tokenizer.apply_chat_template(row_json, tokenize=False)
-        tokenized_row = tokenizer(row, padding="max_length", max_length=user_config.max_length)
-        return tokenized_row
+        row['text'] = tokenizer.apply_chat_template(row_json, tokenize=False)
+        return row
 
-    tokenized_chat_dataset = dataset.map(
+    chat_dataset = dataset.map(
         format_chat_template,
         num_proc=4,
         remove_columns=["Description", "Patient", "Doctor"],
@@ -103,7 +102,8 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
 
     trainer = SFTTrainer(
         model=model,
-        train_dataset=tokenized_chat_dataset,
+        train_dataset=chat_dataset,
+        processing_class=tokenizer,
         args=sft_config,
     )
 
