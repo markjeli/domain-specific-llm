@@ -92,8 +92,6 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     def tokenize_function(examples, field_name):
         return tokenizer(
             [example + EOS_TOKEN for example in examples[field_name]],
-            padding="max_length",
-            max_length=sft_config.max_seq_length,
         )
 
     tokenized_dataset = dataset.map(

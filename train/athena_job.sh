@@ -32,6 +32,7 @@ python train_cpt.py \
   --gradient_accumulation_steps 8 \
   --learning_rate 2e-5 \
   --optim adamw_8bit \
+  --packing True \
   --bf16 True \
   --eval_strategy steps \
   --output_dir $SCRATCH/model-outputs \
