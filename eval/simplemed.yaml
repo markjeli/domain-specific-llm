@@ -10,6 +10,8 @@ dataset_kwargs:
 doc_to_text: !function preprocess_dataset.doc_to_text
 doc_to_target: !function preprocess_dataset.doc_to_target
 doc_to_choice: [ 'A', 'B', 'C', 'D' ]
+num_fewshot: 2
+fewshot_split: train
 metric_list:
   - metric: acc
     aggregation: mean
