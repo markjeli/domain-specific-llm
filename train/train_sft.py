@@ -1,13 +1,13 @@
-import torch
 from dataclasses import dataclass, field
 
+import torch
 from datasets import load_dataset
 from peft import LoraConfig, TaskType, get_peft_model
 from transformers import (
-    HfArgumentParser,
-    AutoTokenizer,
     AutoModelForCausalLM,
+    AutoTokenizer,
     BitsAndBytesConfig,
+    HfArgumentParser,
 )
 from trl import SFTConfig, SFTTrainer
 
@@ -74,16 +74,12 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
             "up_proj",
             "down_proj",
         ],
-        modules_to_save=[
-            "lm_head",
-            "embed_token",
-        ],  # Needed for Llama chat template. It will learn chat template tokens.
         task_type=TaskType.CAUSAL_LM,
         bias="none",
     )
     model = get_peft_model(model, lora_config)
 
-    dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
+    train_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
     def format_chat_template(row):
@@ -91,18 +87,32 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
             {"role": "user", "content": row["Patient"]},
             {"role": "assistant", "content": row["Doctor"]},
         ]
-        row['text'] = tokenizer.apply_chat_template(row_json, tokenize=False)
+        row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
         return row
 
-    chat_dataset = dataset.map(
+    train_chat_dataset = train_dataset.map(
         format_chat_template,
         num_proc=4,
         remove_columns=["Description", "Patient", "Doctor"],
     )
 
+    validation_dataset = load_dataset("Open-Orca/SlimOrca-Dedup", split="train[:15%]")
+
+    def format_orca_dataset(row):
+        messages = [
+            {"role": m["from"], "content": m["value"]} for m in row["conversations"]
+        ]
+        row["text"] = tokenizer.apply_chat_template(messages, tokenize=False)
+        return row
+
+    validation_chat_dataset = validation_dataset.map(
+        format_orca_dataset, remove_columns=validation_dataset.column_names
+    )
+
     trainer = SFTTrainer(
         model=model,
-        train_dataset=chat_dataset,
+        train_dataset=train_chat_dataset,
+        eval_dataset=validation_chat_dataset,
         processing_class=tokenizer,
         args=sft_config,
     )
