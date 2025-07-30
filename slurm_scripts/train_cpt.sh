@@ -1,15 +1,15 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=domain-specific-llm
+#SBATCH --job-name=domain-specific-llm-train-cpt
 #SBATCH --gpus=1
-#SBATCH --time=48:00:00
+#SBATCH --time=8:00:00
 #SBATCH --account=plgttaautopilot2-gpu-a100
 #SBATCH --partition=plgrid-gpu-a100
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=16G
 #SBATCH --gres=gpu
-#SBATCH -e slurm/train_error.log # STDERR
-#SBATCH -o slurm/train_out.log # STDOUT
+#SBATCH -e logs/train_cpt-%j.err # STDERR
+#SBATCH -o logs/train_cpt-%j.out # STDOUT
 
 module load GCCcore/12.3.0
 module load Python/3.11.3
@@ -20,10 +20,10 @@ export HF_HOME=$SCRATCH/.cache_dir/huggingface
 export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 export WANDB_PROJECT=magisterka
 
-python train_sft.py \
-  --save_dir outputs/final_model \
-  --model_name_or_path meta-llama/Llama-3.2-1B \
-  --load_in_8bit False \
+cd $HOME/domain-specific-llm/train
+
+python train_cpt.py \
+  --save_dir $SCRATCH/final_models/cpt/Llama-3.2-1B-abstract \
   --load_in_4bit True \
   --bnb_4bit_quant_type nf4 \
   --bnb_4bit_use_double_quant True \
@@ -36,6 +36,7 @@ python train_sft.py \
   --packing True \
   --bf16 True \
   --eval_strategy steps \
-  --output_dir $SCRATCH/model-outputs \
+  --save_strategy epoch \
+  --output_dir $SCRATCH/model-outputs/cpt/Llama-3.2-1B-abstract \
   --report_to wandb \
-  --run_name llama-3.2-1B-abstract-4bit
+  --run_name llama-3.2-1B-abstract

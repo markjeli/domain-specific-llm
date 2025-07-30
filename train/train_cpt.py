@@ -61,8 +61,8 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
 
     if quantization_config is not None:
         lora_config = LoraConfig(
-            r=8,
-            lora_alpha=16,
+            r=256,
+            lora_alpha=128,
             target_modules=[
                 "q_proj",
                 "k_proj",
