@@ -45,13 +45,16 @@ class ScriptArguments:
 
 
 def main(user_config: ScriptArguments, sft_config: SFTConfig):
-    quantization_config = BitsAndBytesConfig(
-        load_in_8bit=user_config.load_in_8bit,
-        load_in_4bit=user_config.load_in_4bit,
-        bnb_4bit_quant_type=user_config.bnb_4bit_quant_type,
-        bnb_4bit_use_double_quant=user_config.bnb_4bit_use_double_quant,
-        bnb_4bit_compute_dtype=torch.bfloat16,
-    )
+    if user_config.load_in_4bit or user_config.load_in_8bit:
+        quantization_config = BitsAndBytesConfig(
+            load_in_8bit=user_config.load_in_8bit,
+            load_in_4bit=user_config.load_in_4bit,
+            bnb_4bit_quant_type=user_config.bnb_4bit_quant_type,
+            bnb_4bit_use_double_quant=user_config.bnb_4bit_use_double_quant,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+        )
+    else:
+        quantization_config = None
 
     # Use instruct version of the model because it contains chat template and its tokens.
     # Other (harder) option will be to extend previous tokenizer with new tokens and chat template.
@@ -61,23 +64,24 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         device_map="auto",
         quantization_config=quantization_config,
     )
-
-    lora_config = LoraConfig(
-        r=256,
-        lora_alpha=128,
-        target_modules=[
-            "q_proj",
-            "k_proj",
-            "v_proj",
-            "o_proj",
-            "gate_proj",
-            "up_proj",
-            "down_proj",
-        ],
-        task_type=TaskType.CAUSAL_LM,
-        bias="none",
-    )
-    model = get_peft_model(model, lora_config)
+    if quantization_config is not None:
+        lora_config = LoraConfig(
+            r=256,
+            lora_alpha=128,
+            target_modules=[
+                "q_proj",
+                "k_proj",
+                "v_proj",
+                "o_proj",
+                "gate_proj",
+                "up_proj",
+                "down_proj",
+            ],
+            task_type=TaskType.CAUSAL_LM,
+            bias="none",
+        )
+        model = get_peft_model(model, lora_config)
+        model.print_trainable_parameters()
 
     train_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
