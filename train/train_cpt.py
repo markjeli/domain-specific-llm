@@ -18,6 +18,10 @@ class ScriptArguments:
         default=None,
         metadata={"help": "Path to save the model."},
     )
+    model_name_or_path: str = field(
+        default="meta-llama/Llama-3.2-1B",
+        metadata={"help": "Hugging Face model ID or path to the local model."},
+    )
     load_in_8bit: bool = field(
         default=False,
         metadata={"help": "Load model in 8-bit."},
@@ -42,7 +46,6 @@ class ScriptArguments:
 
 def main(user_config: ScriptArguments, sft_config: SFTConfig):
     dataset_path = "medical_abstracts_train.csv"
-    model_name_or_path = "meta-llama/Llama-3.2-1B"
     if user_config.load_in_4bit or user_config.load_in_8bit:
         quantization_config = BitsAndBytesConfig(
             load_in_8bit=user_config.load_in_8bit,
@@ -54,9 +57,9 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
     else:
         quantization_config = None
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(user_config.model_name_or_path)
     model = AutoModelForCausalLM.from_pretrained(
-        model_name_or_path, device_map="auto", quantization_config=quantization_config
+        user_config.model_name_or_path, device_map="auto", quantization_config=quantization_config
     )
 
     if quantization_config is not None:
@@ -78,7 +81,7 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-    dataset = load_dataset("csv", data_files=dataset_path, split="train[:25%]")
+    dataset = load_dataset("csv", data_files=dataset_path, split="train")
 
     dataset_val = load_dataset(
         "allenai/c4",
