@@ -24,6 +24,7 @@ cd $HOME/domain-specific-llm/train
 
 python train_cpt.py \
   --save_dir $SCRATCH/final_models/cpt/Llama-3.2-1B-abstract \
+  --model_name_or_path meta-llama/Llama-3.2-1B \
   --load_in_4bit True \
   --bnb_4bit_quant_type nf4 \
   --bnb_4bit_use_double_quant True \
