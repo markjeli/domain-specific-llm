@@ -1,0 +1,101 @@
+question,ans0,ans1,ans2,ans3,label
+What is the gold standard method for detecting SARS-CoV-2 in clinical samples?,ELISA,RT-PCR,Western,Flow cytometry,1
+Which neurotransmitter system is primarily associated with mood regulation and social bonding?,Dopaminergic,Serotonergic,Opioid,Cholinergic,2
+What is the primary embryonic origin of microglia in the brain?,Liver,Yolk Sac,Bone Marrow,Thymus,1
+Which pediatric vasculitis is classically associated with coronary artery aneurysms?,Kawasaki,Takayasu,Behçet,Sarcoidosis,0
+Which immune cell type is primarily responsible for controlling herpes simplex virus infections?,Bcells,CD4,CD8,NKcells,2
+Which type of model does the DUST framework use for virtual staining in histopathology?,GANs,Diffusion,Transformers,CNNs,1
+Which organization provides national-level hospital accreditation in India?,WHO,KASH,NABH,CDC,2
+What is the main purpose of disease-specific quality of life (QOL) instruments?,Diagnosis,Prevention,Comparison,Measurement,3
+What is the primary goal of a vaccine?,Diagnosis,Treatment,Prevention,Mutation,2
+Which virus is most commonly associated with Multisystem Inflammatory Syndrome in Children (MIS-C)?,Influenza,Adenovirus,SARS-CoV-2,Rhinovirus,2
+Which imaging technique is most commonly used to study brain activity during motor imagery?,EEG,PET,CT,fMRI,3
+Which enzyme in saliva is commonly used as a non-invasive marker of sympathetic nervous system activity?,Amylase,Lipase,Pepsin,Trypsin,0
+What is the causative agent of Buruli ulcer?,M. tuberculosis,M. leprae,M. ulcerans,M. avium,2
+Which brain region is primarily affected in Huntington's disease?,Hippocampus,Cerebellum,Striatum,Thalamus,2
+What is the primary function of Cas13 in CRISPR-Cas systems?,DNA cutting,RNA targeting,Spacer integration,Protein synthesis,1
+What type of molecule is curcumin primarily classified as in medical research?,Hormone,Antibiotic,Phytochemical,Neurotransmitter,2
+What term describes a disorder caused by deletions or duplications of contiguous genes on a chromosome?,Frameshift,Aneuploidy,Transversion,Microdeletion,3
+Which of the following non-communicable diseases (NCDs) is most closely associated with increased risk of infection-related death?,Hypertension,Migraine,Myopia,Eczema,0
+Which of the following pre-existing conditions is most strongly associated with increased risk of hospitalization due to COVID-19?,Renal,Migraine,Dermatitis,Myopia,0
+Which method is commonly used to measure oxygen consumption rate (OCR) and extracellular acidification rate (ECAR) in immune cells?,XF,PCR,ELISA,MRI,0
+Which molecular mechanism is primarily studied to understand gene regulation without altering the DNA sequence?,Methylation,Mutation,Translation,Replication,0
+"Which protein, when deleted in T cells, has been shown to enhance CAR T cell efficacy against solid tumors?",PTPN2,BRCA1,MYC,KRAS,0
+Which brain measurement technique is commonly used to assess neural variability in humans?,MRI,EEG,CT,PET,1
+Which microRNA is implicated in cardiac remodeling and fibrosis in hypertensive heart disease?,MiR-155,miR-34a,MiR-21,MiR-16,2
+Which chemical sense is most commonly reduced in COVID-19 patients?,Touch,Vision,Taste,Smell,3
+Which sex has a higher mortality risk after a hip fracture in the elderly?,Female,Male,Both,None,1
+Which communication type is most associated with increased anxiety risk from social media addiction?,Parasociality,Broadness,Exclusivity,Reciprocity,0
+Which condition is an independent risk factor for arteriovenous fistula dysfunction in hemodialysis patients?,Hypoglycemia,Hyperphosphatemia,Leukopenia,Anemia,1
+Which ion channel is associated with weak inwardly rectifying currents in olfactory ensheathing cells (OECs) from the olfactory mucosa?,Nav1.1,Kir4.1,Cav2.2,TRPV1,1
+Which transcription factor is essential for proper organization of hindlimb motor pools and sensorimotor circuits?,Pax6,Isl2,Sox9,Olig2,1
+Which hormone is primarily involved in the pear defense response to Venturia pyrina?,Salicylic,Auxin,Jasmonic,Ethylene,2
+Which bacterium is a common cause of foodborne illness and often linked to outbreaks?,Listeria,Shigella,Salmonella,Vibrio,2
+Which fungus is known to cause brain infections and has been linked to an outbreak in the Pacific Northwest?,Aspergillus,Candida,Cryptococcus,Histoplasma,2
+"Which signaling pathway is often implicated in cell growth, survival, and is associated with hearing loss when dysregulated?",MAPK,JAK-STAT,Wnt,PI3K-Akt,3
+Which hypothesis suggests that reduced exposure to microbes in early life increases susceptibility to allergic diseases?,Germline,Hygiene,Mutation,Barrier,1
+Which type of dementia is primarily associated with impaired blood flow to the brain?,Alzheimer,Lewy,Vascular,Frontotemporal,2
+What is the primary function of bacteriophage exclusion (BREX) systems in bacteria?,Replication,Transcription,Restriction,Translation,2
+Which receptor is primarily involved in mediating estrogen's protective effects against liver fibrosis?,AR,ESR1,GR,PR,1
+Which virus is most commonly associated with nasopharyngeal carcinoma?,HPV,EBV,CMV,HSV,1
+Which hormone is primarily produced by magnocellular neurons in the hypothalamus?,Cortisol,Insulin,Vasopressin,Prolactin,2
+Which protein is primarily implicated in the pathology of frontotemporal dementia and other tauopathies?,Amyloid,Tau,Synuclein,Huntingtin,1
+Which histone modification is essential for Polycomb-mediated gene silencing?,H3K27me3,H3K4me3,H3K9ac,H3K36me3,0
+Which data source is commonly used for integrative cancer genomics research?,UK Biobank,NHANES,ENCODE,TCGA,3
+Which enzyme is critical for de novo serine synthesis in cancer cells?,LDHA,HK2,IDH1,PHGDH,3
+Which condition showed a significant association with weight cycle in both males and females?,Depression,Osteoporosis,Diabetes,Anemia,0
+Which cerebellar region is most associated with higher-order cognitive functions such as language and default mode network activity?,Vermis,Flocculus,Crus I/II,Nodulus,2
+Which neurotransmitter is primarily used for signaling at the tripartite synapse?,Dopamine,Serotonin,Glutamate,GABA,2
+What is the general function of microRNAs (miRNAs) in cells?,Replication,Translation,Regulation,Phagocytosis,2
+Which type of molecule is commonly involved in immune signaling and was found enriched in severe COVID-19 cases?,Enzymes,Cytokines,Lipids,Hormones,1
+What type of disease is influenced by many genes and environmental factors?,Polygenic,Monogenic,Infectious,Congenital,0
+What term describes the physical connections between brain regions?,Structural,Functional,Cognitive,Behavioral,0
+Which protein complex is directly involved in synaptic vesicle fusion?,SNARE,Actin,Tubulin,Dynein,0
+Which receptor is classically associated with early-phase long-term potentiation (LTP) through rapid surface externalization?,GABA,AMPA,NMDA,Dopamine,1
+Which clinical measurement is commonly used to assess muscle strength in elderly patients?,BMI,VO₂max,Grip,ECG,2
+Which metric is commonly used to define obesity in adolescents?,BMR,BMI,LDL,CRP,1
+Which hypothalamic neuron type is primarily associated with promoting feeding behavior?,POMC,AgRP,PrRP,Orexin,1
+Which bacterial immune system uses RNA-guided nucleases to degrade foreign DNA?,Nhi,CRISPR,Ribosome,Exosome,1
+Which brain rhythm is suggested to integrate activity between distant brain regions?,Alpha,Delta,Respiration,Theta,2
+Which cerebellar structure's white matter integrity is linked to internalizing behavioral problems in children?,SCP,MCP,ICP,Vermis,2
+Which epidemiological model is commonly used to predict the spread of infectious diseases like COVID-19?,ABC,SIR,DNA,MRI,1
+Which receptor is essential for SARS-CoV-2 to enter human cells?,ACE2,IL6,VEGF,MHC,0
+Which scientific field focuses on the study of bacteria?,Virology,Mycology,Bacteriology,Parasitology,2
+"Which bacterial species is a common cause of hospital-associated infections, particularly in ICUs?",Escherichia,Klebsiella,Streptococcus,Salmonella,1
+Which molecular technique is commonly used to study bacterial diversity in microbiome research?,ELISA,Western,PCR,16S,3
+Which brain region is primarily associated with memory and synaptic plasticity?,Thalamus,Hippocampus,Cerebellum,Medulla,1
+Which protein is essential for transporting synaptic cargo to the post-synaptic density in neurons?,Dynein,Kinesin,Myosin,Actin,2
+Which technique is primarily used to record electrical activity in the brain for diagnosing neurological disorders?,MRI,EEG,PET,CT,1
+What does IFR stand for in epidemiology?,Infection,Incidence,Immunity,Fatality,3
+Which disease is most commonly associated with Virchow-Robin spaces in neuroimaging?,Multiple Sclerosis,Epilepsy,Schizophrenia,Parkinsonism,0
+Which type of model is commonly used to study the spread of infectious diseases like COVID-19?,Compartmental,Molecular,Behavioral,Genetic,0
+Which type of synapse reduces its effectiveness with repeated stimulation?,Depressing,Excitatory,Static,Facilitating,0
+Which cardiac drug is known for its off-target toxicities but is effective as an antiarrhythmic?,Amiodarone,Digoxin,Lidocaine,Flecainide,0
+Which laboratory technique is commonly used to detect antibodies in serum samples?,PCR,ELISA,MRI,CT,1
+What is the classical minimum duration of fever required to diagnose Fever of Unknown Origin (FUO)?,1 week,2 weeks,3 weeks,4 weeks,2
+"Which type of cholesterol is commonly referred to as ""bad"" cholesterol due to its association with increased cardiovascular risk?",HDL,LDL,VLDL,IDL,1
+"What is the primary mode of transmission for SARS-CoV-2, the virus causing COVID-19?",Blood,Feces,Airborne,Water,2
+Which virus primarily causes seasonal influenza in humans?,HIV,Influenza,Adenovirus,Norovirus,1
+Which method is commonly used for high-throughput analysis of bacterial cells expressing fluorescent biosensors?,PCR,Western,Flow,ELISA,2
+Which technique enables precise control of neuronal activity using light?,Radiology,Optogenetics,Chemotherapy,Cryotherapy,1
+Which metabolic enzyme is regulated by RNA to influence stem cell differentiation?,Hexokinase,Enolase,Lactase,Amylase,1
+Which condition is the primary cause of irreversible decay of retinal light responses after death?,Hypoxia,Acidosis,Dehydration,Hyperglycemia,0
+Which statistical model is most appropriate for analyzing ordinal outcomes like self-rated health status?,Linear,Logistic,Ordered,Poisson,2
+Which enzyme is commonly used to digest linear double-stranded DNA in single-stranded DNA preparation?,Taq,EcoRI,Lambda,Dnase,2
+Which component of the auditory event-related potential (ERP) is typically immature in 8-year-old children?,P1,N1,P300,N2,1
+What is the primary bacterial target of tricyclic pyrrolopyrimidines (TPPs)?,Ribosome,Peptidoglycan,Gyrase,Polymerase,2
+What technique is primarily used to optimize large-scale biophysical neuron models in modern computational neuroscience?,Clustering,Backpropagation,Differentiation,Simulation,2
+Mutations in which gene are primarily responsible for 21-hydroxylase deficiency?,CYP11B1,CYP17A1,CYP21A2,CYP19A1,2
+Which pathway is primarily targeted by antifolate drugs in cancer therapy?,Glycolysis,Lipogenesis,Purine,Proteolysis,2
+Which imaging modality measures cerebral blood flow non-invasively without radiation?,CT,ASL,PET,SPECT,1
+What does PPE primarily aim to protect healthcare workers from?,Heat,Noise,Fatigue,Infection,3
+What does heritability estimate in genetic studies?,Genetics,Nutrition,Exercise,Environment,0
+Which type of neurons is primarily responsible for integrating multisensory cues?,Mirror,Congruent,Inhibitory,Opposite,1
+Which imaging finding is commonly used to assess white matter abnormalities in neurological diseases?,Calcification,Hemorrhage,Hypoperfusion,Hyperintensity,3
+Which biomarker is commonly elevated in response to chronic inflammation and is associated with cardiovascular disease risk?,Troponin,Hs-CRP,Creatinine,Bilirubin,1
+Which kidney cell type is primarily affected in Focal Segmental Glomerulosclerosis (FSGS)?,Nephron,Podocyte,Tubule,Macrophage,1
+What is the term for the complete set of genetic material in an organism?,Genome,Proteome,Transcriptome,Epigenome,0
+Which brainstem region is primarily responsible for generating the respiratory rhythm?,Hippocampus,Cerebellum,Amygdala,PreBotzinger complex,3
+Which branch of the autonomic nervous system is primarily associated with parasympathetic activity?,Sympathetic,Enteric,Somatic,Parasympathetic,3
+Which mutation in the SARS-CoV-2 spike protein became dominant in early global and African outbreaks?,N501Y,E484K,D614G,P681R,2
+Which brain imaging technique measures blood oxygen level-dependent (BOLD) responses?,EEG,MEG,fMRI,PET,2

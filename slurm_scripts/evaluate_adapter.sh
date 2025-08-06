@@ -22,6 +22,8 @@ export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 BASE_MODEL="meta-llama/Llama-3.2-1B"
 ADAPTER_PATH="$SCRATCH/final_models/cpt/Llama-3.2-1B-abstract"
 
+cd $HOME/domain-specific-llm/eval
+
 lm_eval --model hf \
   --model_args pretrained=$BASE_MODEL,load_in_4bit=True,peft="$ADAPTER_PATH" \
   --log_samples \
@@ -34,7 +36,7 @@ lm_eval --model hf \
   --model_args pretrained=$BASE_MODEL,load_in_4bit=True,peft="$ADAPTER_PATH" \
   --log_samples \
   --output_path eval_results \
-  --tasks multimedqa, simplemed \
+  --tasks multimedqa,simplemed \
   --device cuda:0 \
   --batch_size auto:2 \
   --trust_remote_code

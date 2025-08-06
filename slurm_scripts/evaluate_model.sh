@@ -21,6 +21,8 @@ export PIP_CACHE_DIR=$SCRATCH/.cache_dir/pip
 
 MODEL_NAME="Llama-3.2-1B-abstract"
 
+cd $HOME/domain-specific-llm/eval
+
 lm_eval --model hf \
   --model_args pretrained=$MODEL_NAME \
   --log_samples \
@@ -33,7 +35,7 @@ lm_eval --model hf \
   --model_args pretrained=$MODEL_NAME \
   --log_samples \
   --output_path eval_results \
-  --tasks multimedqa, simplemed \
+  --tasks multimedqa,simplemed \
   --device cuda:0 \
   --batch_size auto:2 \
   --trust_remote_code
