@@ -25,6 +25,7 @@ cd $HOME/domain-specific-llm/train
 python train_sft.py \
   --save_dir $SCRATCH/final_models/sft/Llama-3.2-1B-Instruct-conversation \
   --model_name_or_path meta-llama/Llama-3.2-1B-Instruct \
+  --adapter_path "" \
   --load_in_4bit True \
   --bnb_4bit_quant_type nf4 \
   --bnb_4bit_use_double_quant True \

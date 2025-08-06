@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 import torch
 from datasets import load_dataset
-from peft import LoraConfig, TaskType, get_peft_model
+from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -21,6 +21,12 @@ class ScriptArguments:
     model_name_or_path: str = field(
         default="meta-llama/Llama-3.2-1B",
         metadata={"help": "Hugging Face model ID or path to the local model."},
+    )
+    adapter_path: str = field(
+        default=None,
+        metadata={
+            "help": "Path to the adapter model. If provided, the model will be loaded with this adapter."
+        },
     )
     load_in_8bit: bool = field(
         default=False,
@@ -64,6 +70,21 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         device_map="auto",
         quantization_config=quantization_config,
     )
+
+    if user_config.adapter_path:
+        model = PeftModel.from_pretrained(
+            model, user_config.adapter_path, device_map="auto"
+        )
+        model = model.merge_and_unload()
+        model.save_pretrained(f"{user_config.save_dir}/merged_model")
+        tokenizer.save_pretrained(f"{user_config.save_dir}/merged_model")
+
+        model = AutoModelForCausalLM.from_pretrained(
+            f"{user_config.save_dir}/merged_model",
+            device_map="auto",
+            quantization_config=quantization_config,
+        )
+
     if quantization_config is not None:
         lora_config = LoraConfig(
             r=256,
