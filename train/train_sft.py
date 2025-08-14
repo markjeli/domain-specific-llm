@@ -104,7 +104,7 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-    train_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
+    validation_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train[:20%]")
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
     def format_chat_template(row):
@@ -115,13 +115,13 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
         return row
 
-    train_chat_dataset = train_dataset.map(
+    validation_chat_dataset = validation_dataset.map(
         format_chat_template,
         num_proc=4,
         remove_columns=["Description", "Patient", "Doctor"],
     )
 
-    validation_dataset = load_dataset("Open-Orca/SlimOrca-Dedup", split="train[:15%]")
+    train_dataset = load_dataset("Open-Orca/SlimOrca-Dedup", split="train")
 
     def format_orca_dataset(row):
         messages = [
@@ -130,8 +130,8 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         row["text"] = tokenizer.apply_chat_template(messages, tokenize=False)
         return row
 
-    validation_chat_dataset = validation_dataset.map(
-        format_orca_dataset, remove_columns=validation_dataset.column_names
+    train_chat_dataset = train_dataset.map(
+        format_orca_dataset, remove_columns=train_dataset.column_names
     )
 
     trainer = SFTTrainer(
