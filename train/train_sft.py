@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 import torch
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets
 from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
@@ -104,7 +104,7 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-    validation_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train[:20%]")
+    medical_dataset = load_dataset("ruslanmv/ai-medical-chatbot", split="train")
     tokenizer.pad_token = "<|finetune_right_pad_id|>"
 
     def format_chat_template(row):
@@ -115,13 +115,13 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
         return row
 
-    validation_chat_dataset = validation_dataset.map(
+    medical_chat_dataset = medical_dataset.map(
         format_chat_template,
         num_proc=4,
         remove_columns=["Description", "Patient", "Doctor"],
     )
 
-    train_dataset = load_dataset("Open-Orca/SlimOrca-Dedup", split="train")
+    orca_dataset = load_dataset("Open-Orca/SlimOrca-Dedup", split="train")
 
     def format_orca_dataset(row):
         messages = [
@@ -130,9 +130,14 @@ def main(user_config: ScriptArguments, sft_config: SFTConfig):
         row["text"] = tokenizer.apply_chat_template(messages, tokenize=False)
         return row
 
-    train_chat_dataset = train_dataset.map(
-        format_orca_dataset, remove_columns=train_dataset.column_names
+    orca_chat_dataset = orca_dataset.map(
+        format_orca_dataset, remove_columns=orca_dataset.column_names
     )
+
+    combined_dataset = concatenate_datasets([medical_chat_dataset, orca_chat_dataset])
+    shuffled_dataset = combined_dataset.shuffle(seed=42)
+    train_chat_dataset = shuffled_dataset.select(range(300000))
+    validation_chat_dataset = shuffled_dataset.select(range(300000, 360000))
 
     trainer = SFTTrainer(
         model=model,
